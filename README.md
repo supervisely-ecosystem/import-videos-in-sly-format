@@ -10,12 +10,12 @@
   <a href="#Demo">Demo</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/import-videos-project)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/import-videos-in-sly-format)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/import-videos-project)
-[![views](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-project&counter=views&label=views)](https://supervise.ly)
-[![used by teams](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-project&counter=downloads&label=used%20by%20teams)](https://supervise.ly)
-[![runs](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-project&counter=runs&label=runs&123)](https://supervise.ly)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/import-videos-in-sly-format)
+[![views](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-in-sly-format&counter=views&label=views)](https://supervise.ly)
+[![used by teams](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-in-sly-format&counter=downloads&label=used%20by%20teams)](https://supervise.ly)
+[![runs](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/import-videos-in-sly-format&counter=runs&label=runs&123)](https://supervise.ly)
 
 </div>
 
@@ -50,9 +50,9 @@ As a result we will get project `videos_example_project` with 1 dataset named: `
 
 # How to Run
 
-**Step 1.** Add [Import videos in Supervisely format](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/import-images-project) app to your team from Ecosystem
+**Step 1.** Add [Import videos in Supervisely format](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/import-videos-in-sly-format) app to your team from Ecosystem
 
-<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-videos-project" src="" width="350px" style='padding-bottom: 10px'/>
+<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-videos-in-sly-format" src="" width="350px" style='padding-bottom: 10px'/>
 
 **Step 2.** Run the application from the context menu of the directory with images on Team Files page
 
