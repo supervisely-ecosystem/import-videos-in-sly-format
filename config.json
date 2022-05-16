@@ -1,5 +1,5 @@
 {
-  "name": "Import images in Supervisely format",
+  "name": "Import videos in Supervisely format",
   "type": "app",
   "categories": [
     "import",
