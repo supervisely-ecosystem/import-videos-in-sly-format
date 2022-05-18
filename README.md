@@ -21,7 +21,7 @@
 
 # Overview
 
-Import videos in Supervisely format with annotations. Supported extensions: `.avi`, `.mp4`, `.3gp`, `.flv`, `.webm`, `.wmv`, `.mov`, `.mkv`.
+Import videos in [Supervisely format](https://docs.supervise.ly/data-organization/00_ann_format_navi) with annotations. Supported extensions: `.avi`, `.mp4`, `.3gp`, `.flv`, `.webm`, `.wmv`, `.mov`, `.mkv`.
 
 #### Input files structure
 
