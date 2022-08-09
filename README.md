@@ -1,6 +1,6 @@
 <div align="center" markdown>
 
-<img src="https://i.imgur.com/WVrkPVO.png" style="width: 100%;"/>
+<img src="https://user-images.githubusercontent.com/48245050/182845074-905a4570-31bf-4c1a-8cb4-283157781530.jpg"/>
 
 # Import Videos in Supervisely format
 
