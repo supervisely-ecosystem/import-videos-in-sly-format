@@ -40,7 +40,7 @@ videos_example_project
 │   └── video
 │       ├── sea_lion.mp4
 │       └── cars.mp4
-├── key_id_map.json
+├── key_id_map.json (optional)
 └── meta.json
 
 ```
