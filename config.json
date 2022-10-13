@@ -6,18 +6,22 @@
     "videos"
   ],
   "description": "Import videos with annotations in Supervisely format",
-  "docker_image": "supervisely/base-py-sdk:6.66.5",
+  "docker_image": "supervisely/base-py-sdk:6.68.1",
   "main_script": "src/main.py",
   "task_location": "workspace_tasks",
   "icon": "https://i.imgur.com/PF9YLqA.png",
   "icon_cover": true,
   "poster": "https://user-images.githubusercontent.com/48245050/182845074-905a4570-31bf-4c1a-8cb4-283157781530.jpg",
   "headless": true,
-  "instance_version": "6.4.48",
+  "min_agent_version": "6.7.4",
+  "min_instance_version": "6.5.46",
   "context_menu": {
+    "context_category": "Import",
     "target": [
       "files_folder",
-      "files_file"
+      "files_file",
+      "agent_folder",
+      "agent_file"
     ]
   }
 }
