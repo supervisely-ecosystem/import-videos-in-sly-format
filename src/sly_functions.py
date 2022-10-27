@@ -62,7 +62,7 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
         if g.IS_ON_AGENT:
             agent_id, cur_files_path = api.file.parse_agent_id_and_path(g.INPUT_FILE)
         else:
-            cur_files_path = g.INPUT_DIR
+            cur_files_path = g.INPUT_FILE
 
         remote_path = g.INPUT_FILE
         save_archive_path = os.path.join(save_path, get_file_name_with_ext(cur_files_path))
