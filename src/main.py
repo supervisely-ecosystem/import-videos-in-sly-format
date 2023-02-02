@@ -14,7 +14,6 @@ STORAGE_DIR: str = sly.app.get_data_dir()
 
 class MyImport(sly.app.Import):
     def process(self, context: sly.app.Import.Context):
-        # project_dir = f.download_data_from_team_files(api=g.api, task_id=task_id, save_path=g.STORAGE_DIR)
         project_dir = context.path
         if context.is_directory is False:
             shutil.unpack_archive(project_dir, STORAGE_DIR)
