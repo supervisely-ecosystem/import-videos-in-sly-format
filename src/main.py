@@ -6,9 +6,9 @@ import sly_functions as f
 import sly_globals as g
 
 
-@g.my_app.callback("import-images-project")
+@g.my_app.callback("import-videos-project")
 @sly.timeit
-def import_images_project(
+def import_videos_project(
         api: sly.Api, task_id: int, context: dict, state: dict, app_logger
 ) -> None:
     project_dir = f.download_data_from_team_files(
@@ -29,7 +29,7 @@ def main():
     sly.logger.info(
         "Script arguments", extra={"TEAM_ID": g.TEAM_ID, "WORKSPACE_ID": g.WORKSPACE_ID}
     )
-    g.my_app.run(initial_events=[{"command": "import-images-project"}])
+    g.my_app.run(initial_events=[{"command": "import-videos-project"}])
 
 
 if __name__ == "__main__":
