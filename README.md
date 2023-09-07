@@ -33,7 +33,8 @@ Import videos in [Supervisely format](https://docs.supervise.ly/data-organizatio
 
 You can upload a directory or an archive. If you are uploading an archive, it must contain a single top-level directory.
 
-Directory name defines project name. Subdirectories define dataset names.
+Directory name defines project name. Subdirectories define dataset names.<br>
+ℹ️ You can download the archive with data example [here](https://github.com/supervisely-ecosystem/import-videos-in-sly-format/files/12546490/my_videos_project.zip).<br>
 
 Project directory example:
 
