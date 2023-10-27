@@ -45,42 +45,58 @@ def search_videos_dir(dir_path):
     return is_video_dir
 
 
+def is_archive(path):
+    return get_file_ext(path) in [".zip", ".tar"] or path.endswith(".tar.gz")
+
+
 def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) -> str:
     """Download data from remote directory in Team Files."""
     if g.INPUT_DIR:
         listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-        if len(listdir) == 1 and (
-            get_file_ext(listdir[0]) in [".zip", ".tar"] or listdir[0].endswith(".tar.gz")
-        ):
+        if len(listdir) == 1 and is_archive(listdir[0]):
             sly.logger.info(
                 "Folder mode is selected, but archive file is uploaded. Switching to file mode."
             )
             g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
-        elif len(listdir) > 1 and any(get_file_ext(file) in [".zip", ".tar"] for file in listdir):
-            raise ValueError("Multiple archives are not supported.")
-        elif basename(normpath(g.INPUT_DIR)) in ["video", "ann"]:
-            if len(g.INPUT_DIR.strip("/").split("/")) > 2:
-                g.INPUT_DIR = dirname(dirname(normpath(g.INPUT_DIR)))
-            elif len(g.INPUT_DIR.strip("/").split("/")) > 1:
-                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
-        elif any(basename(normpath(x)) in ["video", "ann"] for x in listdir):
-            parent_dir = dirname(normpath(g.INPUT_DIR))
-            if parent_dir != "/":
-                g.INPUT_DIR = parent_dir
+        elif len(listdir) > 1 and len([is_archive(file) for file in listdir]) > 1:
+            raise Exception("Multiple archives are not supported.")
+        if basename(normpath(g.INPUT_DIR)) in ["video", "ann"]:
+            g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+            listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
+        if all(
+            basename(normpath(x)) in ["video", "ann"] for x in listdir if api.file.dir_exists(x)
+        ):
+            g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+            listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
+        if "meta.json" in [
+            basename(normpath(x))
+            for x in api.file.listdir(g.TEAM_ID, dirname(normpath(g.INPUT_DIR)))
+        ]:
+            g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+        if not g.INPUT_DIR.endswith("/"):
+            g.INPUT_DIR += "/"
 
     if g.INPUT_FILE:
         file_ext = get_file_ext(g.INPUT_FILE)
-        if file_ext not in [".zip", ".tar"] and not g.INPUT_FILE.endswith(".tar.gz"):
+        if not is_archive(g.INPUT_FILE):
             sly.logger.info("File mode is selected, but uploaded file is not archive.")
             if basename(normpath(g.INPUT_FILE)) in ["meta.json", "key_id_map.json"]:
                 g.INPUT_DIR, g.INPUT_FILE = dirname(g.INPUT_FILE), None
             elif sly.video.is_valid_ext(file_ext) or file_ext == ".json":
                 parent_dir = dirname(normpath(g.INPUT_FILE))
+                listdir = api.file.listdir(g.TEAM_ID, parent_dir)
                 if basename(normpath(parent_dir)) in ["video", "ann"]:
-                    if len(parent_dir.strip("/").split("/")) > 2:
-                        parent_dir = dirname(dirname(normpath(parent_dir)))
-                    elif len(parent_dir.strip("/").split("/")) > 1:
-                        parent_dir = dirname(normpath(parent_dir))
+                    parent_dir = dirname(normpath(parent_dir))
+                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                if all(
+                    basename(normpath(x)) in ["video", "ann"]
+                    for x in listdir
+                    if api.file.dir_exists(x)
+                ):
+                    parent_dir = dirname(normpath(parent_dir))
+                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                if "meta.json" in [basename(normpath(x)) for x in listdir]:
+                    sly.logger.info(f"Found meta.json in {parent_dir}.")
                 if not parent_dir.endswith("/"):
                     parent_dir += "/"
                 g.INPUT_DIR, g.INPUT_FILE = parent_dir, None
@@ -98,7 +114,7 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
         progress_cb = get_progress_cb(
             api=api,
             task_id=task_id,
-            message=f"Downloading {remote_path.lstrip('/').rstrip('/')}",
+            message=f"Downloading {remote_path.strip('/')}",
             total=sizeb,
             is_size=True,
         )
@@ -117,7 +133,9 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
             cur_files_path = g.INPUT_FILE
 
         remote_path = g.INPUT_FILE
-        save_archive_path = os.path.join(save_path, get_file_name_with_ext(cur_files_path))
+        save_archive_path = os.path.join(
+            save_path, get_file_name_with_ext(normpath(cur_files_path))
+        )
         sizeb = api.file.get_info_by_path(g.TEAM_ID, remote_path).sizeb
         progress_cb = get_progress_cb(
             api=api,
