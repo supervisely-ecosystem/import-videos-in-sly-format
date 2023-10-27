@@ -49,9 +49,11 @@ def search_videos_dir(dir_path):
 
 def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) -> str:
     """Download data from remote directory in Team Files."""
+    available_archive_formats = list(zip(*shutil.get_archive_formats()))[0]
+
     if g.INPUT_DIR:
         listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-        if len(listdir) == 1 and sly.fs.get_file_ext(listdir[0]) in [".zip", ".tar"]:
+        if len(listdir) == 1 and sly.fs.get_file_ext(listdir[0]).lstrip(".") in available_archive_formats:
             sly.logger.info(
                 "Folder mode is selected, but archive file is uploaded. Switching to file mode."
             )
@@ -71,7 +73,6 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
                 g.INPUT_DIR = parent_dir
 
     if g.INPUT_FILE:
-        available_archive_formats = list(zip(*shutil.get_archive_formats()))[0]
         file_ext = sly.fs.get_file_ext(g.INPUT_FILE)
         if file_ext.lstrip(".") not in available_archive_formats:
             sly.logger.info("File mode is selected, but uploaded file is not archive.")
