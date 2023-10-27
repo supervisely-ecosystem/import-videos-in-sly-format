@@ -5,7 +5,7 @@ from os.path import basename, dirname, normpath
 from typing import Callable
 
 import supervisely as sly
-from supervisely.io.fs import get_file_name_with_ext, silent_remove
+from supervisely.io.fs import get_file_name_with_ext, silent_remove, get_file_ext
 
 import sly_globals as g
 
@@ -41,26 +41,22 @@ def search_projects(dir_path):
 
 def search_videos_dir(dir_path):
     listdir = os.listdir(dir_path)
-    is_video_dir = any(
-        sly.fs.get_file_ext(f) in sly.video.ALLOWED_VIDEO_EXTENSIONS for f in listdir
-    )
+    is_video_dir = any(get_file_ext(f) in sly.video.ALLOWED_VIDEO_EXTENSIONS for f in listdir)
     return is_video_dir
 
 
 def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) -> str:
     """Download data from remote directory in Team Files."""
-    available_archive_formats = list(zip(*shutil.get_archive_formats()))[0]
-
     if g.INPUT_DIR:
         listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-        if len(listdir) == 1 and sly.fs.get_file_ext(listdir[0]).lstrip(".") in available_archive_formats:
+        if len(listdir) == 1 and (
+            get_file_ext(listdir[0]) in [".zip", ".tar"] or listdir[0].endswith(".tar.gz")
+        ):
             sly.logger.info(
                 "Folder mode is selected, but archive file is uploaded. Switching to file mode."
             )
             g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
-        elif len(listdir) > 1 and any(
-            sly.fs.get_file_ext(file) in [".zip", ".tar"] for file in listdir
-        ):
+        elif len(listdir) > 1 and any(get_file_ext(file) in [".zip", ".tar"] for file in listdir):
             raise ValueError("Multiple archives are not supported.")
         elif basename(normpath(g.INPUT_DIR)) in ["video", "ann"]:
             if len(g.INPUT_DIR.strip("/").split("/")) > 2:
@@ -73,8 +69,8 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
                 g.INPUT_DIR = parent_dir
 
     if g.INPUT_FILE:
-        file_ext = sly.fs.get_file_ext(g.INPUT_FILE)
-        if file_ext.lstrip(".") not in available_archive_formats:
+        file_ext = get_file_ext(g.INPUT_FILE)
+        if file_ext not in [".zip", ".tar"] and not g.INPUT_FILE.endswith(".tar.gz"):
             sly.logger.info("File mode is selected, but uploaded file is not archive.")
             if basename(normpath(g.INPUT_FILE)) in ["meta.json", "key_id_map.json"]:
                 g.INPUT_DIR, g.INPUT_FILE = dirname(g.INPUT_FILE), None
@@ -180,10 +176,11 @@ def get_effective_ann_name(vid_name, ann_names):
 
 
 def create_empty_ann(vids_dir, vid_name, ann_dir):
-    vid_path = os.path.join(vids_dir, vid_name)
     import numpy
+
     numpy.float = numpy.float64
     numpy.int = numpy.int_
+    vid_path = os.path.join(vids_dir, vid_name)
     (height, width), frames_count = sly.video.get_image_size_and_frames_count(vid_path)
     ann = sly.VideoAnnotation((int(height), int(width)), int(frames_count))
     ann_name = vid_name + g.ANN_EXT
