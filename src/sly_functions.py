@@ -183,8 +183,8 @@ def create_empty_ann(vids_dir, vid_name, ann_dir):
     import numpy
     numpy.float = numpy.float64
     numpy.int = numpy.int_
-    img_size, frames_count = sly.video.get_image_size_and_frames_count(vid_path)
-    ann = sly.VideoAnnotation(img_size, frames_count)
+    (height, width), frames_count = sly.video.get_image_size_and_frames_count(vid_path)
+    ann = sly.VideoAnnotation((int(height), int(width)), int(frames_count))
     ann_name = vid_name + g.ANN_EXT
     sly.json.dump_json_file(ann.to_json(), os.path.join(ann_dir, ann_name))
     return ann_name
