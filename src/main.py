@@ -20,8 +20,8 @@ def import_videos_project(
     
     elif len(project_dirs) == 0 and len(only_videos) > 0:
         sly.logger.warn(
-            f"Not found datasets/projects in Supervisely format. "
-            f"Will upload all videos from directories: {only_videos}."
+            f"Not found valid data (project in Supervisely format). "
+            f"Will upload only videos from directories: {only_videos}."
         )
         f.upload_only_videos(api, task_id, only_videos)
     else:
@@ -74,7 +74,7 @@ def import_videos_project(
                 if len(failed_ann_names) > 0:
                     for error, ann_names in failed_ann_names.items():
                         sly.logger.warn(
-                            f"[{error}] error in {len(ann_names)} annotation files: {ann_names}. "
+                            f"[{error}] error occurred for {len(vid_name)} items: {vid_name}. "
                             "Will create empty annotation files instead..."
                         )
                 if dataset_items_cnt == 0:

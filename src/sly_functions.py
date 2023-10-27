@@ -62,14 +62,14 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
             )
             g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
         else:
-            if basename(normpath(g.INPUT_DIR)) in ["video", "ann"]:
-                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
-                listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
             if all(
-                basename(normpath(x)) in ["video", "ann"]
+                basename(normpath(x)) in ["video", "ann", "meta"]
                 for x in listdir
                 if api.file.dir_exists(g.TEAM_ID, x)
             ):
+                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+                listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
+            if basename(normpath(g.INPUT_DIR)) in ["video", "ann", "meta"]:
                 g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
                 listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
             if "meta.json" in [
@@ -89,14 +89,14 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
             elif sly.video.is_valid_ext(file_ext) or file_ext == ".json":
                 parent_dir = dirname(normpath(g.INPUT_FILE))
                 listdir = api.file.listdir(g.TEAM_ID, parent_dir)
-                if basename(normpath(parent_dir)) in ["video", "ann"]:
-                    parent_dir = dirname(normpath(parent_dir))
-                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
                 if all(
-                    basename(normpath(x)) in ["video", "ann"]
+                    basename(normpath(x)) in ["video", "ann", "meta"]
                     for x in listdir
                     if api.file.dir_exists(g.TEAM_ID, x)
                 ):
+                    parent_dir = dirname(normpath(parent_dir))
+                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                if basename(normpath(parent_dir)) in ["video", "ann", "meta"]:
                     parent_dir = dirname(normpath(parent_dir))
                     listdir = api.file.listdir(g.TEAM_ID, parent_dir)
                 if "meta.json" in [basename(normpath(x)) for x in listdir]:
@@ -154,6 +154,8 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
             local_save_path=save_archive_path,
             progress_cb=progress_cb,
         )
+        if not is_archive(save_archive_path):
+            raise Exception(f"Downloaded file is not archive. Path: {save_archive_path}")
         sly.fs.unpack_archive(save_archive_path, save_path)
         silent_remove(save_archive_path)
 
@@ -240,7 +242,9 @@ def upload_only_videos(api: sly.Api, task_id, vid_dirs: list):
         ]
         videos = api.video.upload_paths(dataset.id, video_names, video_paths, progress_project_cb)
         videos_cnt += len(videos)
-    if videos_cnt > 0:
+    if videos_cnt > 1:
         sly.logger.info(f"{videos_cnt} videos were uploaded to project '{project_name}'.")
+    elif videos_cnt == 1:
+        sly.logger.info(f"{videos_cnt} video was uploaded to project '{project_name}'.")
 
     return project.name
