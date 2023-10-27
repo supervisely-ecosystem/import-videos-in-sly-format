@@ -1,5 +1,7 @@
 import os
 import sys
+
+from dotenv import load_dotenv
 from pathlib import Path
 
 import supervisely as sly
@@ -10,12 +12,9 @@ root_source_dir = str(Path(sys.argv[0]).parents[1])
 print(f"App source directory: {root_source_dir}")
 sys.path.append(root_source_dir)
 
-# only for convenient debug
-from dotenv import load_dotenv
-# debug_env_path = os.path.join(root_source_dir, "debug.env")
-# secret_debug_env_path = os.path.join(root_source_dir, "secret_debug.env")
-# load_dotenv(debug_env_path)
-# load_dotenv(secret_debug_env_path, override=True)
+if sly.is_development():
+    load_dotenv("local.env")
+    load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 api: sly.Api = sly.Api.from_env()
 my_app: AppService = AppService()
@@ -34,3 +33,5 @@ else:
 
 STORAGE_DIR: str = my_app.data_dir
 mkdir(STORAGE_DIR, True)
+
+ANN_EXT = ".json"
