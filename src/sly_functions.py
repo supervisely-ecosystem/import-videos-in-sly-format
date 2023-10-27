@@ -58,13 +58,15 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
                 "Folder mode is selected, but archive file is uploaded. Switching to file mode."
             )
             g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
-        elif len(listdir) > 1 and len([is_archive(file) for file in listdir]) > 1:
+        elif len([is_archive(file) for file in listdir if is_archive(file) is True]) > 1:
             raise Exception("Multiple archives are not supported.")
         if basename(normpath(g.INPUT_DIR)) in ["video", "ann"]:
             g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
             listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
         if all(
-            basename(normpath(x)) in ["video", "ann"] for x in listdir if api.file.dir_exists(x)
+            basename(normpath(x)) in ["video", "ann"]
+            for x in listdir
+            if api.file.dir_exists(g.TEAM_ID, x)
         ):
             g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
             listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
@@ -91,7 +93,7 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
                 if all(
                     basename(normpath(x)) in ["video", "ann"]
                     for x in listdir
-                    if api.file.dir_exists(x)
+                    if api.file.dir_exists(g.TEAM_ID, x)
                 ):
                     parent_dir = dirname(normpath(parent_dir))
                     listdir = api.file.listdir(g.TEAM_ID, parent_dir)
