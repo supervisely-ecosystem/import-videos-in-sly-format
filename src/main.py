@@ -74,7 +74,7 @@ def import_videos_project(
                 if len(failed_ann_names) > 0:
                     for error, ann_names in failed_ann_names.items():
                         sly.logger.warn(
-                            f"[{error}] error occurred for {len(vid_name)} items: {vid_name}. "
+                            f"[{error}] error occurred for {len(ann_names)} items: {ann_names}. "
                             "Will create empty annotation files instead..."
                         )
                 if dataset_items_cnt == 0:

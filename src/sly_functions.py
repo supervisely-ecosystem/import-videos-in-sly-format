@@ -99,8 +99,11 @@ def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) ->
                 if basename(normpath(parent_dir)) in ["video", "ann", "meta"]:
                     parent_dir = dirname(normpath(parent_dir))
                     listdir = api.file.listdir(g.TEAM_ID, parent_dir)
-                if "meta.json" in [basename(normpath(x)) for x in listdir]:
-                    sly.logger.info(f"Found meta.json in {parent_dir}.")
+                if "meta.json" in [
+                    basename(normpath(x)) for x in api.file.listdir(g.TEAM_ID, dirname(parent_dir))
+                ]:
+                    sly.logger.info(f"Found meta.json in {dirname(parent_dir)}.")
+                    parent_dir = dirname(normpath(parent_dir))
                 if not parent_dir.endswith("/"):
                     parent_dir += "/"
                 g.INPUT_DIR, g.INPUT_FILE = parent_dir, None
