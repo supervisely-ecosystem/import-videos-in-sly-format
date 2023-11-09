@@ -51,62 +51,63 @@ def is_archive(path):
 
 def download_data_from_team_files(api: sly.Api, task_id: int, save_path: str) -> str:
     """Download data from remote directory in Team Files."""
-    if g.INPUT_DIR:
-        listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-        archives_cnt = len([is_archive(file) for file in listdir if is_archive(file) is True])
-        if archives_cnt > 1:
-            raise Exception("Multiple archives are not supported.")
-        if len(listdir) == 1 and archives_cnt == 1:
-            sly.logger.info(
-                "Folder mode is selected, but archive file is uploaded. Switching to file mode."
-            )
-            g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
-        else:
-            if all(
-                basename(normpath(x)) in ["video", "ann", "meta"]
-                for x in listdir
-                if api.file.dir_exists(g.TEAM_ID, x)
-            ):
-                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
-                listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-            if basename(normpath(g.INPUT_DIR)) in ["video", "ann", "meta"]:
-                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
-                listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
-            if "meta.json" in [
-                basename(normpath(x))
-                for x in api.file.listdir(g.TEAM_ID, dirname(normpath(g.INPUT_DIR)))
-            ]:
-                g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
-            if not g.INPUT_DIR.endswith("/"):
-                g.INPUT_DIR += "/"
-
-    if g.INPUT_FILE:
-        file_ext = get_file_ext(g.INPUT_FILE)
-        if not is_archive(g.INPUT_FILE):
-            sly.logger.info("File mode is selected, but uploaded file is not archive.")
-            if basename(normpath(g.INPUT_FILE)) in ["meta.json", "key_id_map.json"]:
-                g.INPUT_DIR, g.INPUT_FILE = dirname(g.INPUT_FILE), None
-            elif sly.video.is_valid_ext(file_ext) or file_ext == ".json":
-                parent_dir = dirname(normpath(g.INPUT_FILE))
-                listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+    if not g.IS_ON_AGENT:
+        if g.INPUT_DIR:
+            listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
+            archives_cnt = len([is_archive(file) for file in listdir if is_archive(file) is True])
+            if archives_cnt > 1:
+                raise Exception("Multiple archives are not supported.")
+            if len(listdir) == 1 and archives_cnt == 1:
+                sly.logger.info(
+                    "Folder mode is selected, but archive file is uploaded. Switching to file mode."
+                )
+                g.INPUT_DIR, g.INPUT_FILE = None, listdir[0]
+            else:
                 if all(
                     basename(normpath(x)) in ["video", "ann", "meta"]
                     for x in listdir
                     if api.file.dir_exists(g.TEAM_ID, x)
                 ):
-                    parent_dir = dirname(normpath(parent_dir))
-                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
-                if basename(normpath(parent_dir)) in ["video", "ann", "meta"]:
-                    parent_dir = dirname(normpath(parent_dir))
-                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                    g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+                    listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
+                if basename(normpath(g.INPUT_DIR)) in ["video", "ann", "meta"]:
+                    g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+                    listdir = api.file.listdir(g.TEAM_ID, g.INPUT_DIR)
                 if "meta.json" in [
-                    basename(normpath(x)) for x in api.file.listdir(g.TEAM_ID, dirname(parent_dir))
+                    basename(normpath(x))
+                    for x in api.file.listdir(g.TEAM_ID, dirname(normpath(g.INPUT_DIR)))
                 ]:
-                    sly.logger.info(f"Found meta.json in {dirname(parent_dir)}.")
-                    parent_dir = dirname(normpath(parent_dir))
-                if not parent_dir.endswith("/"):
-                    parent_dir += "/"
-                g.INPUT_DIR, g.INPUT_FILE = parent_dir, None
+                    g.INPUT_DIR = dirname(normpath(g.INPUT_DIR))
+                if not g.INPUT_DIR.endswith("/"):
+                    g.INPUT_DIR += "/"
+
+        if g.INPUT_FILE:
+            file_ext = get_file_ext(g.INPUT_FILE)
+            if not is_archive(g.INPUT_FILE):
+                sly.logger.info("File mode is selected, but uploaded file is not archive.")
+                if basename(normpath(g.INPUT_FILE)) in ["meta.json", "key_id_map.json"]:
+                    g.INPUT_DIR, g.INPUT_FILE = dirname(g.INPUT_FILE), None
+                elif sly.video.is_valid_ext(file_ext) or file_ext == ".json":
+                    parent_dir = dirname(normpath(g.INPUT_FILE))
+                    listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                    if all(
+                        basename(normpath(x)) in ["video", "ann", "meta"]
+                        for x in listdir
+                        if api.file.dir_exists(g.TEAM_ID, x)
+                    ):
+                        parent_dir = dirname(normpath(parent_dir))
+                        listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                    if basename(normpath(parent_dir)) in ["video", "ann", "meta"]:
+                        parent_dir = dirname(normpath(parent_dir))
+                        listdir = api.file.listdir(g.TEAM_ID, parent_dir)
+                    if "meta.json" in [
+                        basename(normpath(x)) for x in api.file.listdir(g.TEAM_ID, dirname(parent_dir))
+                    ]:
+                        sly.logger.info(f"Found meta.json in {dirname(parent_dir)}.")
+                        parent_dir = dirname(normpath(parent_dir))
+                    if not parent_dir.endswith("/"):
+                        parent_dir += "/"
+                    g.INPUT_DIR, g.INPUT_FILE = parent_dir, None
 
     storage_dir = None
     if g.INPUT_DIR is not None:
