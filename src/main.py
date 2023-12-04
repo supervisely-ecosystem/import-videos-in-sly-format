@@ -66,8 +66,8 @@ def import_videos_project(
                             raise Exception("Annotation file not found")
                         sly.VideoAnnotation.load_json_file(os.path.join(ann_dir, ann_name), meta)
                     except Exception as e:
-                        failed_ann_names[e.args[0]].append(ann_name)
                         ann_name = f.create_empty_ann(vids_dir, vid_name, ann_dir)
+                        failed_ann_names[e.args[0]].append(ann_name)
                     res_ann_names.append(ann_name)
                     project_items_cnt += 1
                     dataset_items_cnt += 1
