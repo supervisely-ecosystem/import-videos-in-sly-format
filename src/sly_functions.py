@@ -204,10 +204,6 @@ def get_effective_ann_name(vid_name, ann_names):
 
 
 def create_empty_ann(vids_dir, vid_name, ann_dir):
-    import numpy
-
-    numpy.float = numpy.float64
-    numpy.int = numpy.int_
     vid_path = os.path.join(vids_dir, vid_name)
     (height, width), frames_count = sly.video.get_image_size_and_frames_count(vid_path)
     ann = sly.VideoAnnotation((int(height), int(width)), int(frames_count))
