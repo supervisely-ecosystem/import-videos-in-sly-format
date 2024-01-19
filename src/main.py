@@ -32,6 +32,7 @@ def import_videos_project(
 
         fails = []
         for project_dir in project_dirs:
+            key_id_map = sly.KeyIdMap()
             project_name = os.path.basename(os.path.normpath(project_dir))
 
             sly.logger.info(f"Working with project '{project_name}' from path '{project_dir}'.")
@@ -64,7 +65,7 @@ def import_videos_project(
                     try:
                         if ann_name is None:
                             raise Exception("Annotation file not found")
-                        sly.VideoAnnotation.load_json_file(os.path.join(ann_dir, ann_name), meta)
+                        sly.VideoAnnotation.load_json_file(os.path.join(ann_dir, ann_name), meta, key_id_map)
                     except Exception as e:
                         ann_name = f.create_empty_ann(vids_dir, vid_name, ann_dir)
                         failed_ann_names[e.args[0]].append(ann_name)
