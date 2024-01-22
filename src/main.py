@@ -10,14 +10,14 @@ import sly_globals as g
 @g.my_app.callback("import-videos-project")
 @sly.timeit
 def import_videos_project(
-        api: sly.Api, task_id: int, context: dict, state: dict, app_logger
+    api: sly.Api, task_id: int, context: dict, state: dict, app_logger
 ) -> None:
     project_dirs, only_videos = f.download_data_from_team_files(
         api=api, task_id=task_id, save_path=g.STORAGE_DIR
     )
     if len(project_dirs) == 0 and len(only_videos) == 0:
         raise Exception(f"Not found any videos for import. Please, check your input data.")
-    
+
     elif len(project_dirs) == 0 and len(only_videos) > 0:
         sly.logger.warn(
             f"Not found valid data (project in Supervisely format). "
@@ -65,7 +65,7 @@ def import_videos_project(
                     try:
                         if ann_name is None:
                             raise Exception("Annotation file not found")
-                        sly.VideoAnnotation.load_json_file(os.path.join(ann_dir, ann_name), meta, key_id_map)
+                        sly.VideoAnnotation.load_json_file(os.path.join(ann_dir, ann_name), meta)
                     except Exception as e:
                         ann_name = f.create_empty_ann(vids_dir, vid_name, ann_dir)
                         failed_ann_names[e.args[0]].append(ann_name)
@@ -97,7 +97,6 @@ def import_videos_project(
                 continue
 
             try:
-
                 sly.logger.info(f"Start uploading project '{project_name}'...")
 
                 project = sly.VideoProject.read_single(project_dir)
@@ -113,7 +112,9 @@ def import_videos_project(
             except Exception as e:
                 try:
                     sly.logger.warn(f"Project '{project_name}' uploading failed: {str(e)}.")
-                    project_name = f.upload_only_videos(api, task_id, [ds.item_dir for ds in project.datasets])
+                    project_name = f.upload_only_videos(
+                        api, task_id, [ds.item_dir for ds in project.datasets]
+                    )
                 except Exception as e:
                     fails.append(project_name)
                     sly.logger.warn(f"Not found videos in the directory '{project_dir}'.")
@@ -124,8 +125,9 @@ def import_videos_project(
                 f"{success} project{'s were' if success > 1 else ' was'} uploaded successfully."
             )
         else:
-            raise Exception(f"Failed to import data. Not found videos or projects in Supervisely format.")
-
+            raise Exception(
+                f"Failed to import data. Not found videos or projects in Supervisely format."
+            )
 
     g.my_app.stop()
 
