@@ -41,7 +41,7 @@ def search_projects(dir_path):
 
 def search_videos_dir(dir_path):
     listdir = os.listdir(dir_path)
-    is_video_dir = any(get_file_ext(f) in sly.video.ALLOWED_VIDEO_EXTENSIONS for f in listdir)
+    is_video_dir = any(get_file_ext(f).lower() in sly.video.ALLOWED_VIDEO_EXTENSIONS for f in listdir)
     return is_video_dir
 
 
