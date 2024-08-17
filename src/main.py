@@ -5,7 +5,7 @@ import supervisely as sly
 
 import sly_functions as f
 import sly_globals as g
-
+import workflow as w
 
 @g.my_app.callback("import-videos-project")
 @sly.timeit
@@ -23,7 +23,8 @@ def import_videos_project(
             f"Not found valid data (project in Supervisely format). "
             f"Will upload only videos from directories: {only_videos}."
         )
-        f.upload_only_videos(api, task_id, only_videos)
+        project_info = f.upload_only_videos(api, task_id, only_videos)
+        w.workflow_output(api, project_info.id)
     else:
         sly.logger.info(
             f"Found {len(project_dirs)} project directories in the given directory. "
@@ -107,14 +108,16 @@ def import_videos_project(
                     project_name=project_name,
                     log_progress=True,
                 )
-
+                w.workflow_output(api, pr_id)
                 sly.logger.info(f"Project '{project_name}' uploaded successfully.")
             except Exception as e:
                 try:
                     sly.logger.warn(f"Project '{project_name}' uploading failed: {str(e)}.")
-                    project_name = f.upload_only_videos(
+                    project_info = f.upload_only_videos(
                         api, task_id, [ds.item_dir for ds in project.datasets]
                     )
+                    project_name = project_info.name
+                    w.workflow_output(api, project_info.id)
                 except Exception as e:
                     fails.append(project_name)
                     sly.logger.warn(f"Not found videos in the directory '{project_dir}'.")

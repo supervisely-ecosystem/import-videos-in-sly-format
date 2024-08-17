@@ -212,7 +212,7 @@ def create_empty_ann(vids_dir, vid_name, ann_dir):
     return ann_name
 
 
-def upload_only_videos(api: sly.Api, task_id, vid_dirs: list):
+def upload_only_videos(api: sly.Api, task_id, vid_dirs: list) -> sly.ProjectInfo:
     project_name = "Videos project"
     project = api.project.create(
         g.WORKSPACE_ID, project_name, type=sly.ProjectType.VIDEOS, change_name_if_conflict=True
@@ -247,4 +247,4 @@ def upload_only_videos(api: sly.Api, task_id, vid_dirs: list):
     elif videos_cnt == 1:
         sly.logger.info(f"{videos_cnt} video was uploaded to project '{project_name}'.")
 
-    return project.name
+    return project
