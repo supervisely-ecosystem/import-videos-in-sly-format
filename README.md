@@ -10,7 +10,7 @@
   <a href="#Demo">Demo</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](../../../../supervisely-ecosystem/import-videos-in-sly-format)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/import-videos-in-sly-format)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/import-videos-in-sly-format)
 [![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/import-videos-in-sly-format.png)](https://supervisely.com)
@@ -57,7 +57,7 @@ As a result we will get project `videos_example_project` with 1 dataset named: `
 
 # How to Run
 
-**Step 1.** Add [Import videos in Supervisely format](../../../../supervisely-ecosystem/import-videos-in-sly-format) app to your team from Ecosystem
+**Step 1.** Add [Import videos in Supervisely format](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/import-videos-in-sly-format) app to your team from Ecosystem
 
 <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-videos-in-sly-format" src="https://i.imgur.com/Fp3AaKn.png" width="350px" style='padding-bottom: 10px'/>
 
