@@ -1,1 +1,2 @@
-supervisely==6.73.312
+# supervisely==6.73.483
+git+https://github.com/supervisely/supervisely.git@install-protobuf-in-runtime
