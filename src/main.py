@@ -6,11 +6,12 @@ import supervisely as sly
 import sly_functions as f
 import sly_globals as g
 import workflow as w
+from supervisely import handle_exceptions
 
-@g.my_app.callback("import-videos-project")
 @sly.timeit
+@handle_exceptions(has_ui=False)
 def import_videos_project(
-    api: sly.Api, task_id: int, context: dict, state: dict, app_logger
+    api: sly.Api, task_id: int
 ) -> None:
     project_dirs, only_videos = f.download_data_from_team_files(
         api=api, task_id=task_id, save_path=g.STORAGE_DIR
@@ -132,15 +133,13 @@ def import_videos_project(
                 f"Failed to import data. Not found videos or projects in Supervisely format."
             )
 
-    g.my_app.stop()
-
 
 def main():
     sly.logger.info(
         "Script arguments", extra={"TEAM_ID": g.TEAM_ID, "WORKSPACE_ID": g.WORKSPACE_ID}
     )
-    g.my_app.run(initial_events=[{"command": "import-videos-project"}])
+    import_videos_project(api=g.api, task_id=g.TASK_ID)
 
 
 if __name__ == "__main__":
-    sly.main_wrapper("main", main, log_for_agent=False)
+    sly.main_wrapper("main", main)
