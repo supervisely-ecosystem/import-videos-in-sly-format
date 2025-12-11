@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 import supervisely as sly
-from supervisely.app.v1.app_service import AppService
 from supervisely.io.fs import mkdir
 
 root_source_dir = str(Path(sys.argv[0]).parents[1])
@@ -17,7 +16,6 @@ if sly.is_development():
     load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 api: sly.Api = sly.Api.from_env()
-my_app: AppService = AppService()
 
 TEAM_ID = int(os.environ["context.teamId"])
 WORKSPACE_ID = int(os.environ["context.workspaceId"])
@@ -31,7 +29,7 @@ if INPUT_DIR:
 else:
     IS_ON_AGENT = api.file.is_on_agent(INPUT_FILE)
 
-STORAGE_DIR: str = my_app.data_dir
+STORAGE_DIR = sly.app.get_data_dir()
 mkdir(STORAGE_DIR, True)
 
 ANN_EXT = ".json"
